@@ -1,18 +1,24 @@
 from __future__ import print_function
 
 import boto3
+import datetime
 import json
 import time
 
 print('Loading function')
 
-
+gColdRun = None
 def handler(event, context):
-    '''Provide an event that contains the following keys:
-      - operation: one of the operations in the operations dict below
-      - tableName: required for operations that interact with DynamoDB
-      - payload: a parameter to pass to the operation being performed
-    '''
-    print("Received event: " + json.dumps(event, indent=2))
-    time.sleep(3)
-    return "Hello,World!!"
+    time.sleep(0)
+    global gColdRun
+    ret = 'hot||%s' % datetime.datetime.now()
+    if gColdRun is None:
+        gColdRun = True
+        ret = 'cold||%s' % datetime.datetime.now()
+    print(ret)
+    retBody ={
+        "statusCode":200,
+        "body":ret
+    }
+    print(retBody)
+    return retBody
